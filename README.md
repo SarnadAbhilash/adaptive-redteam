@@ -1,5 +1,9 @@
 # adaptive-redteam
 
+[![CI](https://github.com/SarnadAbhilash/adaptive-redteam/actions/workflows/ci.yml/badge.svg)](https://github.com/SarnadAbhilash/adaptive-redteam/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Adaptive prompt optimization for discovering behavioral failure modes in instruction-tuned language models.
 
 Manual red-teaming doesn't scale: finding prompts that reliably elicit specific failure behaviors requires either exhaustive human effort or blind random sampling, both of which are inefficient. This library implements an adaptive mutation loop that iteratively strengthens prompts toward higher failure scores within a target failure category — surfacing more consistently effective attack prompts than random sampling while remaining grounded in interpretable behavioral categories.

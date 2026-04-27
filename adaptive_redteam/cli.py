@@ -10,6 +10,8 @@ from rich import box
 from rich.console import Console
 from rich.table import Table
 
+from adaptive_redteam.categories.base import FailureCategory
+
 app = typer.Typer(
     name="adaptive-redteam",
     help="Adaptive red-teaming engine for discovering LLM failure modes.",
@@ -58,7 +60,7 @@ _DRY_RUN_RESPONSES = {
 }
 
 
-def _load_category(name: str):
+def _load_category(name: str) -> FailureCategory:
     from adaptive_redteam.categories.hallucination import HallucinationCategory
     from adaptive_redteam.categories.instruction_hierarchy import InstructionHierarchyCategory
     from adaptive_redteam.categories.multi_turn_consistency import MultiTurnConsistencyCategory
