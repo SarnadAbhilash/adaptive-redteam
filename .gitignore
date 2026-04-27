@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+*.egg-info/
+*.pyc
+.DS_Store
+.python-version
+.claude/
+CLAUDE.md
+AGENT.md
+AGENTS.md
+results/
