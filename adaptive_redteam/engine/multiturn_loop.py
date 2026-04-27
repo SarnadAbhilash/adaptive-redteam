@@ -204,6 +204,7 @@ class MultiTurnAdaptiveLoop:
         return record
 
     def _save(self, record: RunRecord) -> None:
+        assert self.output_dir is not None
         from adaptive_redteam.analysis.plots import generate_plots
         from adaptive_redteam.analysis.reports import generate_reports
         from adaptive_redteam.logging.run_logger import RunLogger

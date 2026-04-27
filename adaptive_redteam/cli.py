@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Any, cast
 
 import typer
 from rich import box
@@ -83,7 +84,8 @@ def _load_category(name: str) -> FailureCategory:
         console.print(f"[red]Unknown category '{name}'. "
                       f"Available: {list(mapping.keys())}[/red]")
         raise typer.Exit(1)
-    return mapping[name]()
+    cls: Any = mapping[name]
+    return cast(FailureCategory, cls())
 
 
 @app.command()
@@ -188,6 +190,7 @@ def run(
 
     try:
         use_multi_turn = multi_turn or cat.failure_mode == FailureMode.MULTI_TURN_CONSISTENCY_FAILURE
+        loop: AdaptiveLoop | MultiTurnAdaptiveLoop
         if use_multi_turn:
             loop = MultiTurnAdaptiveLoop(
                 category=cat,

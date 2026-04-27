@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from typing import Any
 
 from adaptive_redteam.failure_mode import FailureMode
 from adaptive_redteam.schemas.score import RedTeamScore
@@ -134,9 +135,9 @@ class LLMScorer(BaseScorer):
         self._base_url = base_url
         self._api_key = api_key
         self._temperature = temperature
-        self._client: object | None = None
+        self._client: Any = None
 
-    def _get_client(self) -> object:
+    def _get_client(self) -> Any:
         if self._client is None:
             from openai import OpenAI
             self._client = OpenAI(base_url=self._base_url, api_key=self._api_key or "placeholder")
@@ -150,7 +151,7 @@ class LLMScorer(BaseScorer):
             temperature=self._temperature,
             max_tokens=256,
         )
-        return resp.choices[0].message.content or ""
+        return str(resp.choices[0].message.content or "")
 
     @staticmethod
     def _parse_judge_response(text: str) -> tuple[float, list[str]]:

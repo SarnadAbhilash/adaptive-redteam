@@ -123,17 +123,17 @@ def _write_summary(record: RunRecord, out_dir: Path) -> Path:
 
     top = record.top_attacks(1)
     if top:
-        best = top[0]
+        top_attack = top[0]
         lines += [
             "",
             "## Best Attack",
             "",
-            f"**Score:** {best.score.score:.4f} | "
-            f"**Mutator:** `{best.mutator_name}` | "
-            f"**Iteration:** {best.iteration}",
+            f"**Score:** {top_attack.score.score:.4f} | "
+            f"**Mutator:** `{top_attack.mutator_name}` | "
+            f"**Iteration:** {top_attack.iteration}",
             "",
             "```",
-            best.prompt,
+            top_attack.prompt,
             "```",
         ]
 

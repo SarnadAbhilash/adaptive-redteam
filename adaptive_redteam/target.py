@@ -59,7 +59,7 @@ class TargetModel:
         from safety_probe.backends.base import GenerationConfig as GC
         cfg = config or GC(temperature=0.7)
         results = self._backend.generate([prompt], cfg)
-        return results[0].response
+        return str(results[0].response)
 
     def generate_batch(self, prompts: list[str], config: GenerationConfig | None = None) -> list[str]:
         """Generate responses for a batch of prompts."""
@@ -79,7 +79,7 @@ class TargetModel:
         cfg = config or GC(temperature=0.7)
         if hasattr(self._backend, "generate_messages"):
             result = self._backend.generate_messages(messages, cfg)
-            return result.response
+            return str(result.response)
 
         transcript = "\n".join(f"{m['role'].upper()}: {m['content']}" for m in messages)
         return self.generate(transcript, cfg)
