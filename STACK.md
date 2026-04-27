@@ -1,78 +1,56 @@
-# AI Safety Research Stack
+# Cross-Repo Interface Contracts
 
-This repo is layer 2 of a planned three-repo stack:
+This document describes what `adaptive-redteam` consumes from [`safety-probe`](https://github.com/SarnadAbhilash/safety-probe) and what it produces for [`realtime-safety-monitor`](https://github.com/SarnadAbhilash/realtime-safety-monitor).
 
-```text
-safety-probe -> adaptive-redteam -> realtime-safety-monitor
+---
+
+## Consumed from safety-probe
+
+### Failure mode taxonomy
+
+```python
+from safety_probe.categories.failures import FailureMode
 ```
 
-## Layer 1: safety-probe
+Re-exported as `adaptive_redteam.FailureMode`. All failure category classes, scorers, and run records reference this enum.
 
-Reusable evaluation toolkit.
+### Backend interface
 
-Owns:
-- Harm and failure taxonomies
-- Probe schemas and probe sets
-- Inference backend abstractions
-- Judge contracts and reusable judges
-- Safety metrics, reports, and plots for parameter sweeps
+```python
+from safety_probe.backends.base import BaseBackend, GenerationConfig
+```
 
-Does not own:
-- Adaptive prompt mutation loops
-- Red-team attack selection
-- Live inference monitoring
-- Dashboards
+`TargetModel` wraps any `BaseBackend` with a simplified generation call. Switching backends (OpenAI API, local Transformers, vLLM) requires no changes to red-teaming logic.
 
-## Layer 2: adaptive-redteam
+### Judge interface
 
-Research system for discovering stronger failure-inducing prompts.
+```python
+from safety_probe.judges.base import BaseJudge, JudgementResult, Verdict
+```
 
-Owns:
-- Failure categories for red-team runs
-- Seed prompts
-- Prompt mutators
-- Adaptive loop and selector
-- Category-specific rule and LLM scorers
-- Run artifacts: prompts, responses, scores, metrics, top attacks, and plots
+`BaseScorer` in this repo extends `BaseJudge` to ensure scorers are compatible with `safety-probe`'s judge infrastructure. LLM scorers use the full `JudgementResult` structure.
 
-Exports to future tools:
-- `scores.jsonl`
-- `top_attacks.md`
-- `summary.md`
-- High-risk prompt patterns and scorer outputs
+---
 
-## Layer 3: realtime-safety-monitor
+## Produced for realtime-safety-monitor
 
-Deferred inference engineering system.
+Each run writes structured output files under `results/runs/<category>/<timestamp>/`. The primary artifact consumed downstream is `scores.jsonl`.
 
-Planned inputs:
-- `FailureMode` from `safety_probe.categories.failures`
-- `BaseJudge` / `JudgementResult` from `safety-probe`
-- High-risk prompt and response patterns from `adaptive-redteam` run outputs
-
-Planned components:
-- Streaming inference endpoint
-- Output monitor that invokes selected scorers/judges
-- Alert log schema
-- Latency and throughput metrics
-- Normal vs monitored inference comparison
-- Minimal dashboard or CLI report
-
-## Interface Sketch
-
-`adaptive-redteam` should produce monitor-consumable artifacts without depending on the monitor:
-
+**`scores.jsonl` record format:**
 ```json
 {
   "failure_mode": "sycophancy",
   "prompt": "...",
   "response": "...",
   "score": 0.82,
-  "signals": ["validated false claim"],
-  "scorer_name": "sycophancy_llm",
+  "signals": ["capitulation: you're absolutely right"],
+  "scorer_name": "sycophancy_rule",
   "iteration": 2,
-  "mutator": "reframe"
+  "mutator": "reframe",
+  "seed_id": "syc-003"
 }
 ```
 
-The future monitor should consume this as research context, not as a production blocklist. Any realtime decisioning must include thresholds, latency budgets, false-positive review, and held-out validation.
+`realtime-safety-monitor` reads this file via `PatternLibrary.from_run_dir(run_dir)`. The schema is stable; adding fields is backward-compatible.
+
+**Additional artifacts** (`top_attacks.md`, `summary.md`, `figures/`) are for human review and are not parsed programmatically by downstream tools.

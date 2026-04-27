@@ -1,8 +1,4 @@
-"""
-adaptive-redteam: adaptive red-teaming engine for discovering LLM failure modes.
-
-Layer 2 of the 3-repo AI safety research stack. Depends on safety-probe.
-"""
+"""Adaptive red-teaming engine for discovering failure-inducing prompts in LLMs."""
 
 from adaptive_redteam.categories.hallucination import HallucinationCategory
 from adaptive_redteam.categories.instruction_hierarchy import InstructionHierarchyCategory
