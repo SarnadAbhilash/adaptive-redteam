@@ -23,13 +23,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Typing :: Typed",
 ]
-
-[project.urls]
-Repository = "https://github.com/SarnadAbhilash/adaptive-redteam"
-"Bug Tracker" = "https://github.com/SarnadAbhilash/adaptive-redteam/issues"
-
 dependencies = [
-    # Install safety-probe first: pip install -e ../safety-probe
     "safety-probe",
     "numpy>=1.26",
     "rich>=13.7",
@@ -42,6 +36,10 @@ dev = [
     "ruff>=0.4",
     "mypy>=1.9",
 ]
+
+[project.urls]
+Repository = "https://github.com/SarnadAbhilash/adaptive-redteam"
+"Bug Tracker" = "https://github.com/SarnadAbhilash/adaptive-redteam/issues"
 
 [project.scripts]
 adaptive-redteam = "adaptive_redteam.cli:main"
